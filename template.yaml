@@ -1,0 +1,257 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Reblie-lambda
+
+  Sample SAM Template for Reblie-lambda
+
+Parameters:
+  Stage:
+    Type: String
+    AllowedValues:
+      - development
+      - staging
+      - production
+  
+  ProjectName:
+    Type: String
+
+Globals:
+  Function:
+    Timeout: 28
+    Environment:
+      Variables:
+        STAGE: !Ref Stage
+
+Resources:
+
+  CodedeploylambdaFunctionInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref developmentCodeDeployNotification
+      Principal: sns.amazonaws.com
+      SourceArn: !Sub arn:aws:sns:us-east-1:387387405527:${ProjectName}-notifyCodeDeployStatusToTeams
+  
+  CodepipelinelambdaFunctionInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !Ref codePipelineNotification
+      Principal: sns.amazonaws.com
+      SourceArn: !Sub arn:aws:sns:us-east-1:387387405527:${ProjectName}-notifyCodepipelineEventToTeams
+
+  buildArtifactsForIntegratedPipelineLambdaServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${ProjectName}-buildArtifactsForIntegratedPipeline"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: "/service-role/"
+      ManagedPolicyArns:
+        - !Ref buildArtifactsForIntegratedPipelineCustomManagedLambdaPolicy
+        - arn:aws:iam::aws:policy/AWSCodePipeline_ReadOnlyAccess
+        - arn:aws:iam::aws:policy/AWSCodePipelineCustomActionAccess
+      Policies:
+        - PolicyName: CodeDeployCustomPolicy
+          PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Sid: VisualEditor0
+                Effect: Allow
+                Action:
+                - codedeploy:GetDeployment
+                - codedeploy:ListDeployments
+                - codedeploy:StopDeployment
+                Resource: "*"
+        - PolicyName: ECSRegisterTaskDefinitionAndService
+          PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Sid: VisualEditor0
+                Effect: Allow
+                Action:
+                - ecs:UpdateService
+                - ecs:ListTagsForResource
+                - ecs:CreateService
+                - ecs:ListAttributes
+                - ecs:ListTasks
+                - ecs:DeleteService
+                - ecs:DescribeServices
+                - ecs:DescribeTaskDefinition
+                Resource: "*"
+
+  buildArtifactsForIntegratedPipelineCustomManagedLambdaPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:    
+      ManagedPolicyName: AWSLambdaBasicExecutionRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - logs:CreateLogGroup
+          - logs:CreateLogStream
+          - logs:PutLogEvents
+          Resource: "*"
+  
+  trackCodeDeployForTeamsUpdateLambdaServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${ProjectName}-trackCodeDeployForTeamsUpdate"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: "/service-role/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSCodeDeployReadOnlyAccess
+      Policies:
+        - PolicyName: AWSLambdaBasicExecutionRole
+          PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Sid: VisualEditor0
+                Effect: Allow
+                Action:
+                 - logs:CreateLogGroup
+                 - logs:CreateLogStream
+                 - logs:PutLogEvents
+                Resource: "*"
+
+  developmentbuildArtifact:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: buildArtifactsForIntegratedPipeline
+      Role: !GetAtt buildArtifactsForIntegratedPipelineLambdaServiceRole.Arn
+      CodeUri: !Sub ${ProjectName}-buildArtifact/
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      Timeout: 900
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+              DEV_APPLICATION_NAME: !Sub AppECS-${ProjectName}-development
+              DEV_DEPLOYMENT_GROUP: !Sub DgpECS-${ProjectName}-development
+              DEV_WEB_CLUSTER: !Sub ${ProjectName}
+    Condition: IsDevelopment
+    
+  stagingbuildArtifact:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt buildArtifactsForIntegratedPipelineLambdaServiceRole.Arn
+      FunctionName: buildArtifact-stage
+      CodeUri: !Sub ${ProjectName}-buildArtifact/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Timeout: 900
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+              STAGING_APPLICATION_NAME: !Sub AppECS-${ProjectName}-staging
+              STAGING_DEPLOYMENT_GROUP: !Sub DgpECS-${ProjectName}-staging
+              STAGING_WEB_CLUSTER: !Sub ${ProjectName}
+    Condition: IsStaging
+
+  productionbuildArtifact:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: buildArtifact-prod
+      CodeUri: !Sub ${ProjectName}-buildArtifact/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Timeout: 900
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+              PRODUCTION_APPLICATION_NAME: !Sub AppECS-${ProjectName}-production
+              PRODUCTION_DEPLOYMENT_GROUP: !Sub DgpECS-${ProjectName}-production
+              PRODUCTION_WEB_CLUSTER: !Sub ${ProjectName}
+    Condition: IsProduction
+
+  codePipelineNotification:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: notifyCodepipelineEventToTeams
+      CodeUri: notifyCodepipelineEventToTeams/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Timeout: 120
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+              PIPELINE_URL: 'https://console.aws.amazon.com/codesuite/codepipeline/pipelines/'
+              TEAMS_CHANNEL: '#AWS-notifications'
+
+  developmentCodeDeployNotification:
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt trackCodeDeployForTeamsUpdateLambdaServiceRole.Arn
+      FunctionName: trackCodeDeployForTeamsUpdate
+      CodeUri: trackCodeDeployForTeamsUpdate/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Timeout: 900
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+              APPROVAL_URL: https://us-east-1.console.aws.amazon.com/codesuite/codedeploy/deployments/
+              TEAMS_CHANNEL: '#AWS-notifications'
+              TEAMS_HOSTNAME: knackforge.webhook.office.com
+              TEAMS_WEBHOOK_PATH: /webhookb2/b59b6d0e-c4fc-4e9a-b5ff-f098d415593b@196eed21-c67a-4aae-a70b-9f97644d5d14/IncomingWebhook/bd9dc73e327045839fe0fc90e9c47abb/02c96413-1377-45e8-a483-58a3d3bc0a20
+              VERIFICATION_DEVELOPMENT_WEB_DOMAIN_URL: https://dev-api.reblie.com:9443/healthy
+    Condition: IsDevelopment
+  
+  stagingCodeDeployNotification:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: trackCodeDeployForTeamsUpdate/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Timeout: 900
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+              APPROVAL_URL: https://us-east-1.console.aws.amazon.com/codesuite/codedeploy/deployments/
+              TEAMS_CHANNEL: '#AWS-notifications'
+              TEAMS_HOSTNAME: knackforge.webhook.office.com
+              TEAMS_WEBHOOK_PATH: /webhookb2/b59b6d0e-c4fc-4e9a-b5ff-f098d415593b@196eed21-c67a-4aae-a70b-9f97644d5d14/IncomingWebhook/bd9dc73e327045839fe0fc90e9c47abb/02c96413-1377-45e8-a483-58a3d3bc0a20
+              VERIFICATION_DEVELOPMENT_WEB_DOMAIN_URL: https://staging-api.reblie.com:9443/healthy
+    Condition: IsStaging  
+  
+  productionCodeDeployNotification:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: trackCodeDeployForTeamsUpdate/
+      Handler: index.handler
+      Runtime: nodejs20.x
+      Timeout: 900
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+              APPROVAL_URL: https://us-east-1.console.aws.amazon.com/codesuite/codedeploy/deployments/
+              TEAMS_CHANNEL: '#lambda-notify'
+              TEAMS_HOSTNAME: knackforge.webhook.office.com
+              TEAMS_WEBHOOK_PATH: /webhookb2/13846b32-1a92-4c80-ba6b-a64e48e415f5@196eed21-c67a-4aae-a70b-9f97644d5d14/IncomingWebhook/481258d2b6cb47388202755b8d6fec5c/02c96413-1377-45e8-a483-58a3d3bc0a20
+              VERIFICATION_DEVELOPMENT_WEB_DOMAIN_URL: https://api.reblie.com:9443/healthy
+    Condition: IsProduction
+
+Conditions:
+  IsDevelopment: !Equals [!Ref Stage, development]
+  IsStaging: !Equals [!Ref Stage, staging]
+  IsProduction: !Equals [!Ref Stage, production]

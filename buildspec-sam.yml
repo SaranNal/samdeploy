@@ -1,0 +1,24 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - wget https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip
+      - unzip aws-sam-cli-linux-x86_64.zip -d sam-installation
+      - sudo ./sam-installation/install
+      - sam --version
+
+  build:
+    commands:
+      - sam build
+      - |
+        if echo $CODEBUILD_INITIATOR | grep -qe "-development$"; then
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=development --stack-name reblie-sam-deploy
+        fi;
+      - |
+        if echo $CODEBUILD_INITIATOR | grep -qe "-staging$"; then
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=staging ParameterKey="Environment",ParameterValue=staging ParameterKey="ProjectName",ParameterValue=reblie --stack-name reblie-sam-deploy-staging
+        fi;  
+      - |
+        if echo $CODEBUILD_INITIATOR | grep -qe "-production$"; then
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=production --stack-name reblie-sam-deploy
+        fi;

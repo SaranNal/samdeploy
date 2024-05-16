@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  whitewell-buildArtifact
+
+  Sample SAM Template for whitewell-buildArtifact
+
+Parameters:
+  Stage:
+    Type: String
+    AllowedValues:
+      - development
+      - staging
+      - production
+
+Globals:
+  Function:
+    Timeout: 28
+    Environment:
+      Variables:
+        STAGE: !Ref Stage
+
+Resources:
+
+  LambdaServiceRole:
+   Type: AWS::IAM::Role
+   Properties:
+     RoleName: whitewell-development-lambdarole
+     AssumeRolePolicyDocument:
+       Version: '2012-10-17'
+       Statement:
+         - Effect: Allow
+           Principal:
+             Service: lambda.amazonaws.com
+           Action: sts:AssumeRole
+     Path: "/service-role/"
+     ManagedPolicyArns:
+       - !Ref CustomManagedLambdaPolicy
+       - arn:aws:iam::aws:policy/AWSCodePipeline_ReadOnlyAccess
+       - arn:aws:iam::aws:policy/AWSCodePipelineCustomActionAccess
+     Policies:
+       - PolicyName: CodeDeployCustomPolicy
+         PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Sid: VisualEditor0
+              Effect: Allow
+              Action:
+              - codedeploy:GetDeployment
+              - codedeploy:ListDeployments
+              - codedeploy:StopDeployment
+              Resource: "*"
+       - PolicyName: S3_PUT_Object
+         PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Sid: VisualEditor0
+              Effect: Allow
+              Action:
+              - s3:PutObject
+              - s3:GetObject
+              - s3:ListBucket
+              Resource: "*"
+      #  - PolicyName: IAM_Base_policy
+      #    PolicyDocument:
+      #       Version: '2012-10-17'
+      #       Statement:
+      #       - Sid: VisualEditor0
+      #         Effect: Allow
+      #         Action:
+      #         - iam:GetRole
+      #         - iam:CreateRole
+      #         Resource: "*"
+  
+  CustomManagedLambdaPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:    
+      ManagedPolicyName: AWSLambdaBasicExecutionRole
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - logs:CreateLogGroup
+          - logs:CreateLogStream
+          - logs:PutLogEvents
+          Resource: "*"
+
+  development:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: whitewell-buildArtifact
+      CodeUri: whitewell-buildArtifact/
+      Role: !GetAtt LambdaServiceRole.Arn
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+              DEV_APPLICATION_NAME: AppECS-whitewell-development
+              DEV_DEPLOYMENT_GROUP: DgpECS-whitewell-development
+              DEV_WEB_CLUSTER: whitewell
+    Condition: IsDevelopment
+  
+  staging:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: whitewell-buildArtifact-staging
+      CodeUri: whitewell-buildArtifact/
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+              STAGING_APPLICATION_NAME: AppECS-whitewell-staging
+              STAGING_DEPLOYMENT_GROUP: DgpECS-whitewell-staging
+              STAGING_WEB_CLUSTER: whitewell
+    Condition: IsStaging
+
+  production:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: whitewell-buildArtifact
+      CodeUri: whitewell-buildArtifact/
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+              PRODUCTION_APPLICATION_NAME: AppECS-whitewell-production
+              PRODUCTION_DEPLOYMENT_GROUP: DgpECS-whitewell-production
+              PRODUCTION_WEB_CLUSTER: whitewell
+    Condition: IsProduction
+
+Conditions:
+  IsDevelopment: !Equals [!Ref Stage, development]
+  IsStaging: !Equals [!Ref Stage, staging]
+  IsProduction: !Equals [!Ref Stage, production]
