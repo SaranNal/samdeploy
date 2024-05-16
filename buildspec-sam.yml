@@ -12,13 +12,13 @@ phases:
       - sam build
       - |
         if echo $CODEBUILD_INITIATOR | grep -qe "-development$"; then
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=development --stack-name reblie-sam-deploy
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=development --stack-name test-sam-deploy
         fi;
       - |
         if echo $CODEBUILD_INITIATOR | grep -qe "-staging$"; then
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=staging ParameterKey="Environment",ParameterValue=staging ParameterKey="ProjectName",ParameterValue=reblie --stack-name reblie-sam-deploy-staging
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=staging ParameterKey="Environment",ParameterValue=staging ParameterKey="ProjectName",ParameterValue=saran --stack-name test-sam-deploy-staging
         fi;  
       - |
         if echo $CODEBUILD_INITIATOR | grep -qe "-production$"; then
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=production --stack-name reblie-sam-deploy
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=production --stack-name test-sam-deploy
         fi;
