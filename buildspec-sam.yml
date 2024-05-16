@@ -9,7 +9,8 @@ phases:
 
   build:
     commands:
-      - sam build
+      # - sam build
+      - sam build --template template.yaml --parameter-overrides ParameterKey="Stage",ParameterValue="development" ParameterKey="ProjectName",ParameterValue="saran"
       - |
         if echo $CODEBUILD_INITIATOR | grep -qe "-development$"; then
           sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=development --stack-name test-sam-deploy
