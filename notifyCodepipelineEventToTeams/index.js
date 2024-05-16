@@ -1,6 +1,6 @@
 var https = require('https');
 var util = require('util');
-var AWS = require("aws-sdk");
+// var AWS = require("aws-sdk");
 exports.handler = async (event) => {
     console.log(event)
     var branchName, teams_text, environment = ''
