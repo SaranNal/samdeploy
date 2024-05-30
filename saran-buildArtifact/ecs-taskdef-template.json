@@ -1,5 +1,5 @@
 {
-    "executionRoleArn": "arn:aws:iam::387387405527:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::484537496937:role/saran-development-ecsTaskExecutionRole",
     "containerDefinitions": [
         {
             "name": "saran-api",
@@ -96,7 +96,7 @@
         }
     ],
     "family": "<SARAN_APP_NAME>",
-    "taskRoleArn": "arn:aws:iam::387387405527:role/ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::484537496937:role/saran-development-ecsTaskExecutionRole",
     "networkMode": "awsvpc",
     "compatibilities": [
         "EC2",
