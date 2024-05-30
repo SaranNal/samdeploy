@@ -369,7 +369,7 @@ def replace_placeholder_and_create_artifacts(containerImages, environmentName):
         taskdef = json.load(taskdef_template)
         taskdef['family'] = "saran-{}".format(environmentName)
         for container in taskdef['containerDefinitions']:
-            container['logConfiguration']['options']['awslogs-group'] = "/ecs/saran-{}".format(environmentName)
+            container['logConfiguration']['options']['awslogs-group'] = "/ecs/saran-development".format(environmentName)
             if container['name'] in containerImages:
                 container['image'] = containerImages[container['name']]
 
