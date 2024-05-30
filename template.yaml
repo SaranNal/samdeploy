@@ -140,9 +140,9 @@ Resources:
         - x86_64
       Environment:
         Variables:
-              DEV_APPLICATION_NAME: !Sub AppECS-${ProjectName}-development
-              DEV_DEPLOYMENT_GROUP: !Sub DgpECS-${ProjectName}-development
-              DEV_WEB_CLUSTER: !Sub ${ProjectName}
+              DEV_APPLICATION_NAME: !Sub AppECS-${ProjectName}-${Stage}
+              DEV_DEPLOYMENT_GROUP: !Sub DgpECS-${ProjectName}-${Stage}
+              DEV_WEB_CLUSTER: !Sub ${ProjectName}-${Stage}
     Condition: IsDevelopment
     
   stagingbuildArtifact:
@@ -158,9 +158,9 @@ Resources:
         - x86_64
       Environment:
         Variables:
-              STAGING_APPLICATION_NAME: !Sub AppECS-${ProjectName}-staging
-              STAGING_DEPLOYMENT_GROUP: !Sub DgpECS-${ProjectName}-staging
-              STAGING_WEB_CLUSTER: !Sub ${ProjectName}
+              STAGING_APPLICATION_NAME: !Sub AppECS-${ProjectName}-${Stage}
+              STAGING_DEPLOYMENT_GROUP: !Sub DgpECS-${ProjectName}-${Stage}
+              STAGING_WEB_CLUSTER: !Sub ${ProjectName}-${Stage}
     Condition: IsStaging
 
   productionbuildArtifact:
@@ -175,9 +175,9 @@ Resources:
         - x86_64
       Environment:
         Variables:
-              PRODUCTION_APPLICATION_NAME: !Sub AppECS-${ProjectName}-production
-              PRODUCTION_DEPLOYMENT_GROUP: !Sub DgpECS-${ProjectName}-production
-              PRODUCTION_WEB_CLUSTER: !Sub ${ProjectName}
+              PRODUCTION_APPLICATION_NAME: !Sub AppECS-${ProjectName}-${Stage}
+              PRODUCTION_DEPLOYMENT_GROUP: !Sub DgpECS-${ProjectName}-${Stage}
+              PRODUCTION_WEB_CLUSTER: !Sub ${ProjectName}-${Stage}
     Condition: IsProduction
 
   codePipelineNotification:
