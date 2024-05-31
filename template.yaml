@@ -9,9 +9,9 @@ Parameters:
   Stage:
     Type: String
     AllowedValues:
-      - development
-      - staging
-      - production
+      - dev
+      - stage
+      - prod
   
   ProjectName:
     Type: String
@@ -252,6 +252,6 @@ Resources:
     Condition: IsProduction
 
 Conditions:
-  IsDevelopment: !Equals [!Ref Stage, development]
-  IsStaging: !Equals [!Ref Stage, staging]
-  IsProduction: !Equals [!Ref Stage, production]
+  IsDevelopment: !Equals [!Ref Stage, dev]
+  IsStaging: !Equals [!Ref Stage, stage]
+  IsProduction: !Equals [!Ref Stage, prod]
