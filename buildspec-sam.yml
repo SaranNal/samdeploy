@@ -10,16 +10,16 @@ phases:
   build:
     commands:
       # - sam build
-      - sam build --template template.yaml --parameter-overrides ParameterKey="Stage",ParameterValue="development" ParameterKey="ProjectName",ParameterValue="saran"
+      - sam build --template template.yaml --parameter-overrides ParameterKey="Stage",ParameterValue="dev" ParameterKey="ProjectName",ParameterValue="saran"
       - |
-        if echo $CODEBUILD_INITIATOR | grep -qe "-development$"; then
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey="Stage",ParameterValue="development" ParameterKey="ProjectName",ParameterValue="saran" --stack-name sam-deploy-development
+        if echo $CODEBUILD_INITIATOR | grep -qe "-dev$"; then
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey="Stage",ParameterValue="dev" ParameterKey="ProjectName",ParameterValue="saran" --stack-name sam-deploy-development
         fi;
       - |
-        if echo $CODEBUILD_INITIATOR | grep -qe "-staging$"; then
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=staging ParameterKey="ProjectName",ParameterValue="saran" --stack-name sam-deploy-staging
+        if echo $CODEBUILD_INITIATOR | grep -qe "-stage$"; then
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=stage ParameterKey="ProjectName",ParameterValue="saran" --stack-name sam-deploy-staging
         fi;  
       - |
-        if echo $CODEBUILD_INITIATOR | grep -qe "-production$"; then
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=production --stack-name sam-deploy-production
+        if echo $CODEBUILD_INITIATOR | grep -qe "-prod$"; then
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=prod --stack-name sam-deploy-production
         fi;
