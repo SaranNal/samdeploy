@@ -17,8 +17,8 @@ codepipeline_client = boto3.client('codepipeline')
 codedeploy = boto3.client('codedeploy')
 ecs_client = boto3.client('ecs')
 s3 = boto3.client('s3')
-blue_green_deployment = ['production', 'staging', 'development']
-auto_traffic_switch = ['development']
+blue_green_deployment = ['prod', 'stag', 'dev']
+auto_traffic_switch = ['dev']
 
 # Main handler of the script
 def lambda_handler(event, context):
