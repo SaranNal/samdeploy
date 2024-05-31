@@ -17,7 +17,7 @@ codepipeline_client = boto3.client('codepipeline')
 codedeploy = boto3.client('codedeploy')
 ecs_client = boto3.client('ecs')
 s3 = boto3.client('s3')
-blue_green_deployment = ['prod', 'stag', 'dev']
+blue_green_deployment = ['prod', 'stage', 'dev']
 auto_traffic_switch = ['dev']
 
 # Main handler of the script
@@ -148,13 +148,13 @@ def download_artifact_from_S3(artifactDetails):
 def get_deployment_status(pipelineName, pipelineExecutionId, environmentName):
     deployStatus = {"status": False }
 
-    if environmentName == 'production':
+    if environmentName == 'prod':
         appName = os.environ['PROD_APPLICATION_NAME']
         deploymentGroup = os.environ['PROD_DEPLOYMENT_GROUP']
-    elif environmentName == 'staging':
+    elif environmentName == 'stage':
         appName = os.environ['STAGING_APPLICATION_NAME']
         deploymentGroup = os.environ['STAGING_DEPLOYMENT_GROUP']
-    elif environmentName == 'development':
+    elif environmentName == 'dev':
         appName = os.environ['DEV_APPLICATION_NAME']
         deploymentGroup = os.environ['DEV_DEPLOYMENT_GROUP']
     else:
