@@ -24,9 +24,9 @@ def post_to_teams(text, environmentName=None):
 def teams_username_based_on_env(environmentName=None):
     username = ''
     environments = {
-        'production': 'Production',
-        'staging': 'Staging',
-        'development': 'Development'
+        'prod': 'Production',
+        'stage': 'Staging',
+        'dev': 'Development'
     }
     
     if environmentName in environments:
