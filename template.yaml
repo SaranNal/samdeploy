@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   Reblie-lambda
 
-  Sample SAM Template for Reblie-lambda
+  Sample SAM Template for Reblie-lambda.
 
 Parameters:
   Stage:
