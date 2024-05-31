@@ -32,4 +32,3 @@ def teams_username_based_on_env(environmentName=None):
     if environmentName in environments:
         username = environments[environmentName]
     return username
-    
