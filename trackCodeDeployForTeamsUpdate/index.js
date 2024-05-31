@@ -35,15 +35,15 @@ exports.handler = async (event) => {
     // Build Branch name based on deployment application
     var branchName = 'AWS';
     var verification_url = process.env.VERIFICATION_DOMAIN_URL;
-    if (details.applicationName == 'AppECS-saran-production') {
+    if (details.applicationName == 'AppECS-saran-prod') {
         branchName = 'production';
         verification_url = process.env.VERIFICATION_DOMAIN_URL;
     }
-    else if (details.applicationName == 'AppECS-saran-staging') {
+    else if (details.applicationName == 'AppECS-saran-stage') {
         branchName = 'staging';
         verification_url = process.env.VERIFICATION_STAGING_WEB_DOMAIN_URL;
     }
-    else if (details.applicationName == 'AppECS-saran-development') {
+    else if (details.applicationName == 'AppECS-saran-dev') {
         branchName = 'development';
         verification_url = process.env.VERIFICATION_DEVELOPMENT_WEB_DOMAIN_URL;
     }
