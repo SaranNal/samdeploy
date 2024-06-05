@@ -144,19 +144,6 @@ Resources:
               DEV_DEPLOYMENT_GROUP: !Sub DgpECS-${ProjectName}-${Stage}
               DEV_WEB_CLUSTER: !Sub ${ProjectName}-${Stage}
     Condition: IsDevelopment
-    
-  S3bucketDelete:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: S3bucketDelete
-      Role: !GetAtt S3bucketDeleteLambdaServiceRole.Arn
-      Handler: lambda_function.lambda_handler
-      Runtime: python3.12
-      Timeout: 900
-      Architectures:
-        - x86_64
-      Layers: !Ref cfnresponse.zip
-    Condition: IsDevelopment
 
   stagingbuildArtifact:
     Type: AWS::Serverless::Function
