@@ -206,7 +206,7 @@ Resources:
   secretmanager:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: secretmanager-${Stage}
+      FunctionName: !Sub secretmanager-${Stage}
       Role: !GetAtt SecrectManagerServiceRole.Arn
       CodeUri: !Sub secret_manager/
       Handler: secret_manager.lambda_handler
