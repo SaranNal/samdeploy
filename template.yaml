@@ -305,7 +305,7 @@ Resources:
             - secretsmanager.amazonaws.com
           eventName:
             - PutSecretValue
-      Name: !Ref secretmanager
+      Name: secret_manager
       State: ENABLED
       Targets:
         - Id: !Ref secretmanager
