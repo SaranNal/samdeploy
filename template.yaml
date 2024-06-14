@@ -308,8 +308,9 @@ Resources:
       Name: secret_manager
       State: ENABLED
       Targets:
-        - Id: !Ref secretmanager
-          Arn: !Ref arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:secretmanager-lambda-role-${ProjectName}-${Stage}
+        - Id: !Sub secretmanager-${ProjectName}-${Stage}
+          Arn: !Ref secretmanager
+          RoleArn: !Ref SecrectManagerServiceRole
 
 Conditions:
   IsDevelopment: !Equals [!Ref Stage, dev]
