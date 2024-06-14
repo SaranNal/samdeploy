@@ -89,7 +89,7 @@ Resources:
   SecrectManagerServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub secretmanager-lambda-role-${ProjectName}-${Environment}
+      RoleName: !Sub secretmanager-lambda-role-${ProjectName}-${Stage}
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -309,7 +309,7 @@ Resources:
       State: ENABLED
       Targets:
         - Id: !Ref secretmanager
-          Arn: !Ref arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:secretmanager-lambda-role-${ProjectName}-${Environment}
+          Arn: !Ref arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:secretmanager-lambda-role-${ProjectName}-${Stage}
 
 Conditions:
   IsDevelopment: !Equals [!Ref Stage, dev]
