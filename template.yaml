@@ -99,6 +99,17 @@ Resources:
             Action: sts:AssumeRole
       Path: "/service-role/"
       Policies:
+        - PolicyName: AWSLambdaBasicExecutionRole
+          PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+              - Sid: VisualEditor0
+                Effect: Allow
+                Action:
+                 - logs:CreateLogGroup
+                 - logs:CreateLogStream
+                 - logs:PutLogEvents
+                Resource: "*"
         - PolicyName: SecrectManager_Limited_Access
           PolicyDocument:
             Version: '2012-10-17'
