@@ -310,7 +310,7 @@ Resources:
       Targets:
         - Id: !Sub secretmanager-${ProjectName}-${Stage}
           Arn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:secretmanager-${Stage}
-          RoleArn: !Ref SecrectManagerServiceRole.Arn
+          RoleArn: !Sub arn:aws:iam::${AWS::AccountId}:role/service-role/secretmanager-lambda-role-${ProjectName}-${Stage}
 
 Conditions:
   IsDevelopment: !Equals [!Ref Stage, dev]
