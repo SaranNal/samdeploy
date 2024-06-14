@@ -230,7 +230,7 @@ Resources:
       Environment:
         Variables:
               TEAMS_HOSTNAME: knackforge.webhook.office.com
-              TEAMS_CHANNEL: /webhookb2/93eea688-6368-4c47-8d54-92a7ba364b30@196eed21-c67a-4aae-a70b-9f97644d5d14/IncomingWebhook/a5fab871a77e4c3ab1f770a1ba50c18f/73c1d036-08b9-4dd3-8346-afa964097b0a
+              Teams_CHANNEL: /webhookb2/93eea688-6368-4c47-8d54-92a7ba364b30@196eed21-c67a-4aae-a70b-9f97644d5d14/IncomingWebhook/a5fab871a77e4c3ab1f770a1ba50c18f/73c1d036-08b9-4dd3-8346-afa964097b0a
       Events:
         SecretsManagerEvent:
           Type: CloudWatchEvent
