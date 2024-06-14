@@ -118,6 +118,7 @@ Resources:
               Effect: Allow
               Action:
               - secretsmanager:GetSecretValue
+              - secretsmanager:ListSecretVersionIds
               Resource: "*"
 
   buildArtifactsForIntegratedPipelineCustomManagedLambdaPolicy:
