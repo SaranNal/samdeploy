@@ -39,12 +39,12 @@ Resources:
       Action: 'lambda:InvokeFunction'
       FunctionName: !Ref codePipelineNotification
       Principal: sns.amazonaws.com
-      SourceArn: !Sub arn:aws:sns:us-east-1:387387405527:${ProjectName}-{Stage}notifyCodepipelineEventToTeams
+      SourceArn: !Sub arn:aws:sns:us-east-1:387387405527:${ProjectName}-{Stage}-notifyCodepipelineEventToTeams
 
   buildArtifactsForIntegratedPipelineLambdaServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub "${ProjectName}-buildArtifactsForIntegratedPipeline"
+      RoleName: !Sub "${ProjectName}-${Stage}-buildArtifactsForIntegratedPipeline"
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -99,7 +99,7 @@ Resources:
             Action: sts:AssumeRole
       Path: "/service-role/"
       Policies:
-        - PolicyName: AWSLambdaBasicExecutionRole-${Stage}
+        - PolicyName: AWSLambdaBasicExecutionRole_${Stage}
           PolicyDocument:
               Version: '2012-10-17'
               Statement:
@@ -249,7 +249,7 @@ Resources:
   codePipelineNotification:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: notifyCodepipelineEventToTeams
+      FunctionName: notifyCodepipelineEventToTeams-${stage}
       CodeUri: notifyCodepipelineEventToTeams/
       Handler: index.handler
       Runtime: nodejs20.x
