@@ -99,7 +99,7 @@ Resources:
             Action: sts:AssumeRole
       Path: "/service-role/"
       Policies:
-        - PolicyName: AWSLambdaBasicExecutionRole_${Stage}
+        - PolicyName: !Sub AWSLambdaBasicExecutionRole_${Stage}
           PolicyDocument:
               Version: '2012-10-17'
               Statement:
@@ -125,7 +125,7 @@ Resources:
   buildArtifactsForIntegratedPipelineCustomManagedLambdaPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:    
-      ManagedPolicyName: AWSLambdaBasicExecutionRole
+      ManagedPolicyName: !Sub AWSLambdaBasicExecutionRole_${Stage}
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -249,7 +249,7 @@ Resources:
   codePipelineNotification:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: notifyCodepipelineEventToTeams-${stage}
+      FunctionName: !Sub notifyCodepipelineEventToTeams-${stage}
       CodeUri: notifyCodepipelineEventToTeams/
       Handler: index.handler
       Runtime: nodejs20.x
