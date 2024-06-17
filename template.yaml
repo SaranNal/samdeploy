@@ -31,7 +31,7 @@ Resources:
       Action: 'lambda:InvokeFunction'
       FunctionName: !Ref stagingCodeDeployNotification
       Principal: sns.amazonaws.com
-      SourceArn: !Sub arn:aws:sns:us-east-1:387387405527:${ProjectName}-notifyCodeDeployStatusToTeams
+      SourceArn: !Sub arn:aws:sns:us-east-1:387387405527:${ProjectName}-{Stage}-notifyCodeDeployStatusToTeams
   
   CodepipelinelambdaFunctionInvokePermission:
     Type: 'AWS::Lambda::Permission'
@@ -39,7 +39,7 @@ Resources:
       Action: 'lambda:InvokeFunction'
       FunctionName: !Ref codePipelineNotification
       Principal: sns.amazonaws.com
-      SourceArn: !Sub arn:aws:sns:us-east-1:387387405527:${ProjectName}-notifyCodepipelineEventToTeams
+      SourceArn: !Sub arn:aws:sns:us-east-1:387387405527:${ProjectName}-{Stage}notifyCodepipelineEventToTeams
 
   buildArtifactsForIntegratedPipelineLambdaServiceRole:
     Type: AWS::IAM::Role
@@ -99,7 +99,7 @@ Resources:
             Action: sts:AssumeRole
       Path: "/service-role/"
       Policies:
-        - PolicyName: AWSLambdaBasicExecutionRole
+        - PolicyName: AWSLambdaBasicExecutionRole-${Stage}
           PolicyDocument:
               Version: '2012-10-17'
               Statement:
@@ -139,7 +139,7 @@ Resources:
   trackCodeDeployForTeamsUpdateLambdaServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub "${ProjectName}-trackCodeDeployForTeamsUpdate"
+      RoleName: !Sub "${ProjectName}-${Stage}-trackCodeDeployForTeamsUpdate"
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
