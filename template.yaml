@@ -249,7 +249,7 @@ Resources:
   codePipelineNotification:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub notifyCodepipelineEventToTeams
+      FunctionName: !Sub notifyCodepipelineEventToTeams-${Stage}
       CodeUri: notifyCodepipelineEventToTeams/
       Handler: index.handler
       Runtime: nodejs20.x
