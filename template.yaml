@@ -99,7 +99,7 @@ Resources:
             Action: sts:AssumeRole
       Path: "/service-role/"
       Policies:
-        - PolicyName: !Sub AWSLambdaBasicExecutionRole_${Stage}
+        - PolicyName: !Sub AWSLambdaBasicExecutionRole
           PolicyDocument:
               Version: '2012-10-17'
               Statement:
@@ -249,7 +249,7 @@ Resources:
   codePipelineNotification:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub notifyCodepipelineEventToTeams-${stage}
+      FunctionName: !Sub notifyCodepipelineEventToTeams
       CodeUri: notifyCodepipelineEventToTeams/
       Handler: index.handler
       Runtime: nodejs20.x
