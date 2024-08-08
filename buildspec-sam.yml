@@ -21,5 +21,5 @@ phases:
         fi;  
       - |
         if echo $CODEBUILD_INITIATOR | grep -qe "-prod$"; then
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=prod --stack-name sam-deploy-production
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --s3-bucket ${BUCKET_NAME} --capabilities=CAPABILITY_NAMED_IAM --disable-rollback --parameter-overrides ParameterKey=Stage,ParameterValue=prod ParameterKey="ProjectName",ParameterValue="saran" --stack-name sam-deploy-production
         fi;
