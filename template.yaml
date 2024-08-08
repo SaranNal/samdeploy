@@ -187,7 +187,7 @@ Resources:
       Role: !GetAtt buildArtifactsForIntegratedPipelineLambdaServiceRole.Arn
       FunctionName: buildArtifact-stage
       CodeUri: !Sub ${ProjectName}-buildArtifact/
-      Handler: app.lambda_handler
+      Handler: lambda_function.lambda_handler
       Runtime: python3.9
       Timeout: 900
       Architectures:
@@ -204,7 +204,7 @@ Resources:
     Properties:
       FunctionName: buildArtifact-prod
       CodeUri: !Sub ${ProjectName}-buildArtifact/
-      Handler: app.lambda_handler
+      Handler: lambda_function.lambda_handler
       Runtime: python3.9
       Timeout: 900
       Architectures:
